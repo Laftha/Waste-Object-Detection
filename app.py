@@ -147,13 +147,21 @@ with col1:
         if uploaded_file is not None:
             image_input = Image.open(uploaded_file).convert("RGB")
     else:
+        # Inject CSS targeting Streamlit's camera video element to prefer back camera orientation
+        st.markdown("""
+            <style>
+            /* Target camera input stream viewport */
+            div[data-testid="stCameraInput"] video {
+                transform: scaleX(1) !important; /* Disables front-camera selfie mirroring */
+                object-fit: cover !important;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+        
+        # Streamlit camera input widget
         camera_file = st.camera_input("Take a snapshot of the waste item")
         if camera_file is not None:
             image_input = Image.open(camera_file).convert("RGB")
-            
-    if image_input is not None:
-        st.image(image_input, caption="Selected Input Image", use_container_width=True)
-        detect_button = st.button("🔍 Run Waste Detection")
 
 with col2:
     st.subheader("2. AI Analysis & Insights")
