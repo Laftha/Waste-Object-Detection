@@ -1,6 +1,15 @@
 import os
 import streamlit as st
 import torch
+from ultralytics import YOLO
+
+# Load your current model
+model = YOLO('best.pt')
+
+# Export it cleanly to standard PyTorch weights format
+model.export(format='torchscript') 
+# Or simply save state dict cleanly:
+torch.save(model.model.state_dict(), 'best_clean.pt')
 # 1. Disable PyTorch safe weights checking for Ultralytics models
 os.environ["TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD"] = "1"
 
