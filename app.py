@@ -1,14 +1,40 @@
 import streamlit as st
+from PIL import Image
 from ultralytics import YOLO
 from PIL import Image
 import numpy as np
+st.title("Smart Waste Detection App")
+st.write("Upload an image of waste to classify it.")
 
+@st.cache_resource
+def load_model():
+    from ultralytics import YOLO
+    return YOLO("best.pt")
+
+try:
+    model = load_model()
+    model_loaded = True
+except Exception as e:
+    model_loaded = False
+    st.error(f"Error loading model weights: {e}")
+
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+
+if uploaded_file is not None and model_loaded:
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Uploaded Image", use_container_width=True)
+    
+    if st.button("Detect Waste"):
+        with st.spinner("Analyzing image..."):
+            results = model(image)
+            res_plotted = results[0].plot()
+            st.image(res_plotted, caption="Detected Waste", use_container_width=True)
 # Load your trained model
 model = YOLO('best.pt')
 
 # Waste category facts and information dictionary
 waste_info = {
-    'Fabrics': {
+    'Fabric': {
         'info': "Textiles and fabrics account for a significant portion of landfill waste. Many natural fibers take months to decompose, while synthetic fabrics can take hundreds of years.",
         'tip': "Donate wearable clothes or drop them off at local textile recycling bins instead of throwing them away."
     },
@@ -28,7 +54,7 @@ waste_info = {
         'info': "Organic waste (food scraps, yard waste) produces potent methane gas when trapped in oxygen-deprived landfills.",
         'tip': "Compost organic waste at home or use local community composting programs to turn it into nutrient-rich soil."
     },
-    'Plastic Bottles': {
+    'Plastic Bottle': {
         'info': "Most plastic bottles are made of PET (polyethylene terephthalate) and can take over 450 years to break down in the environment.",
         'tip': "Empty liquids, flatten bottles to save space, and check local guidelines on whether caps should stay on."
     }
