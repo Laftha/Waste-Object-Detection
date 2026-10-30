@@ -203,7 +203,7 @@ st.markdown("""
     /* Subtle centered watermark background */
     .stApp {
         background-image: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), 
-                          url("YOUR_LOGO_URL_HERE");
+                          url("https://github.com/Laftha/Waste-Object-Detection/blob/main/Screenshot%202026-10-30%20011304.jpg");
         background-size: 300px;
         background-position: center center;
         background-repeat: no-repeat;
