@@ -1,4 +1,13 @@
 import streamlit as st
+st.set_page_config(
+    page_title="EcoSort - Maintenance",
+    page_icon="🚧",
+    layout="centered"
+)
+
+st.title("🚧 EcoSort AI is Currently Under Maintenance")
+st.write("We are currently upgrading our AI models and enhancing system performance.")
+st.info("Please check back soon! Group 4 presentation updates will be live shortly.")
 from PIL import Image
 import numpy as np
 import os
