@@ -1,4 +1,6 @@
 streamlit
-ultralytics
+ultralytics>=8.3.0
+torch
+torchvision
 pillow
 numpy
