@@ -1,15 +1,13 @@
 import streamlit as st
-import sys
-from unittest.mock import MagicMock
+import torch
 
-# Trick Python into bypassing missing GUI system binaries for OpenCV
-class DummyCV2(MagicMock):
-    def __getattr__(self, name):
-        return MagicMock()
+# 1. Allow PyTorch to load custom YOLO weights safely
+try:
+    from ultralytics.nn.tasks import DetectionModel
+    torch.serialization.add_safe_globals([DetectionModel])
+except Exception:
+    pass
 
-sys.modules["cv2"] = DummyCV2()
-
-import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
 import numpy as np
@@ -18,8 +16,27 @@ import numpy as np
 import os
 os.environ["YOLO_VERBOSE"] = "False"
 
-# Load your trained model
-model = YOLO('best.pt')
+st.title("Smart Waste Detection App")
+st.write("Upload an image to classify waste items.")
+
+# 2. Load model
+@st.cache_resource
+def load_model():
+    return YOLO("best.pt")
+
+model = load_model()
+
+# 3. File Uploader & Detection
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Uploaded Image", use_container_width=True)
+    
+    if st.button("Detect Waste"):
+        results = model(image)
+        res_plotted = results[0].plot()
+        st.image(res_plotted, caption="Detected Waste", use_container_width=True)
 
 # Waste category facts and information dictionary
 waste_info = {
@@ -43,7 +60,7 @@ waste_info = {
         'info': "Organic waste (food scraps, yard waste) produces potent methane gas when trapped in oxygen-deprived landfills.",
         'tip': "Compost organic waste at home or use local community composting programs to turn it into nutrient-rich soil."
     },
-    'Plastic Bottles': {
+    'Plastic Bottle': {
         'info': "Most plastic bottles are made of PET (polyethylene terephthalate) and can take over 450 years to break down in the environment.",
         'tip': "Empty liquids, flatten bottles to save space, and check local guidelines on whether caps should stay on."
     }
