@@ -89,14 +89,15 @@ with col2:
     # Correctly select between file uploader and camera input using 'image_file'
     image_file = uploaded_file if input_type == "📁 Upload File" else camera_file
 
-    if image_file is not None:
-        st.image(image_file, caption="Uploaded Image", use_container_width=True)
-        
-        if st.button("🔍 Run AI Classification"):
+    if st.button("🔍 Run AI Classification"):
             with st.spinner("Analyzing image..."):
-                img_pil = Image.open(image_file)
-                # 1. Run inference using image_file
-                results = model.predict(image_pil, conf=0.25)
+                # Save the uploaded file temporarily to disk
+                temp_path = "temp_image.jpg"
+                img_pil = Image.open(image_file).convert("RGB")
+                img_pil.save(temp_path)
+                
+                # 1. Run inference using the saved file path
+                results = model.predict(temp_path, conf=0.25)
                 r = results[0]
                 
                 # 2. Render bounding boxes
