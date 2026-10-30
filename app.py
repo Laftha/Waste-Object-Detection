@@ -161,7 +161,7 @@ with col2:
         st.info("👈 Please upload an image or capture a photo on the left to start detection.")
     elif image_input is not None and model_ready and 'detect_button' in locals() and detect_button:
         with st.spinner("Analyzing image features..."):
-            results = model.predict(image_input, save=False, conf=0.25)
+            results = model.predict(image_input, save=False, conf=0.40)
             r = results[0]
             
             # Convert BGR detection output to RGB for Streamlit display
