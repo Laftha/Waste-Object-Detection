@@ -18,7 +18,7 @@ with st.sidebar:
     **Group Name:** GROUP 4  
     **Project Description:** A smart waste classification capstone project designed to help identify recyclable materials and provide disposal insights.
     """)
-     st.markdown("---")
+    st.markdown("---")
     st.subheader("🎯 Covered Classes")
     st.markdown("""
     * 🧴 **Plastic Bottles**
