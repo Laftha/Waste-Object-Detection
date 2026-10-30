@@ -132,67 +132,70 @@ waste_info = {
 }
 
 # Main Layout: Two Columns
-col1, col2 = st.columns([1, 1], gap="large")
-
-image_input = None
+col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("1. Provide Waste Image")
-    
-    # Selection tabs for upload or live camera photo
     input_type = st.radio("Choose Input Method:", ["📁 Upload File", "📸 Use Camera"], horizontal=True)
     
+    uploaded_file = None
+    camera_file = None
+    
     if input_type == "📁 Upload File":
-        uploaded_file = st.file_uploader("Upload a waste photo (JPG, PNG)", type=["jpg", "jpeg", "png", "JPG", "JPEG", "jfif"])
-        if uploaded_file is not None:
-            image_input = Image.open(uploaded_file).convert("RGB")
+        uploaded_file = st.file_uploader("Upload a waste photo", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
     else:
-        # Inject CSS targeting Streamlit's camera video element to prefer back camera orientation
         st.markdown("""
             <style>
-            /* Target camera input stream viewport */
             div[data-testid="stCameraInput"] video {
-                transform: scaleX(1) !important; /* Disables front-camera selfie mirroring */
+                transform: scaleX(1) !important;
                 object-fit: cover !important;
             }
             </style>
         """, unsafe_allow_html=True)
-        
-        # Streamlit camera input widget
         camera_file = st.camera_input("Take a snapshot of the waste item")
-        if camera_file is not None:
-            image_input = Image.open(camera_file).convert("RGB")
 
 with col2:
     st.subheader("2. AI Analysis & Insights")
     
-    if image_input is None:
-        st.info("👈 Please upload an image or capture a photo on the left to start detection.")
-    elif image_input is not None and model_ready:
-        # Check if your classify/detect button was clicked
-        if 'detect_button' in locals() and detect_button:
+    # Check directly if a file has been uploaded or captured
+    if uploaded_file is not None:
+        image_input = Image.open(uploaded_file).convert("RGB")
+        st.image(image_input, caption="Selected Waste Image", use_container_width=True)
+        
+        if st.button("🔍 Run AI Classification"):
             with st.spinner("Analyzing image features..."):
                 results = model.predict(image_input, save=False, conf=0.25)
                 r = results[0]
-                
-                # Convert BGR detection output to RGB for Streamlit display
                 im_array = r.plot()
                 im_rgb = Image.fromarray(im_array[..., ::-1])
+                st.image(im_rgb, caption="Detection Result", use_container_width=True)
                 
-                # Display the annotated image with bounding boxes
-                st.image(im_rgb, caption="Object Detection Output", use_container_width=True)
-                
-                # Extract detected classes and show details
-                detected_classes = set()
-                for box in r.boxes:
-                    cls_id = int(box.cls[0])
-                    class_name = model.names[cls_id]
-                    detected_classes.add(class_name)
-                
-                if detected_classes:
-                    st.success(f"Detected Items: {', '.join(detected_classes)}")
+                # Show detected classes
+                classes = [model.names[int(box.cls[0])] for box in r.boxes]
+                if classes:
+                    st.success(f"Detected: {', '.join(set(classes))}")
                 else:
-                    st.warning("No waste items detected clearly. Try a different angle or lighting.")
+                    st.warning("No waste detected. Try another angle.")
+                    
+    elif camera_file is not None:
+        image_input = Image.open(camera_file).convert("RGB")
+        st.image(image_input, caption="Captured Camera Image", use_container_width=True)
+        
+        if st.button("🔍 Run AI Classification"):
+            with st.spinner("Analyzing image features..."):
+                results = model.predict(image_input, save=False, conf=0.25)
+                r = results[0]
+                im_array = r.plot()
+                im_rgb = Image.fromarray(im_array[..., ::-1])
+                st.image(im_rgb, caption="Detection Result", use_container_width=True)
+                
+                classes = [model.names[int(box.cls[0])] for box in r.boxes]
+                if classes:
+                    st.success(f"Detected: {', '.join(set(classes))}")
+                else:
+                    st.warning("No waste detected. Try another angle.")
+    else:
+        st.info("👈 Upload an image or take a photo in Step 1 to unlock AI classification.")
 
 # Footer Disclaimer
 st.markdown("---")
