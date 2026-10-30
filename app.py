@@ -35,10 +35,6 @@ with st.sidebar:
 # Header Layout with Title and Logo side-by-side
 col_title, col_logo = st.columns([5, 1])
 
-with col_title:
-    st.title("♻️ EcoSort AI: Smart Waste Detector")
-    st.markdown("Upload an image or take a live picture of waste to identify categories and view recycling tips.")
-
 with col_logo:
     st.image("Screenshot 2026-10-30 011304.jpg", width=90)
 # Load YOLO Model
