@@ -201,16 +201,11 @@ st.markdown("""
     <style>
     /* Clean transparent watermark at the bottom center */
     .stApp {
-        background-image: url(""https://github.com/Laftha/Waste-Object-Detection/blob/main/Screenshot%202026-10-30%20011304.jpg"");
+        background-image: url("https://github.com/Laftha/Waste-Object-Detection/blob/main/Screenshot%202026-10-30%20011304.jpg");
         background-size: 200px auto;
         background-position: bottom 20px center;
         background-repeat: no-repeat;
         background-attachment: fixed;
-    }
-    
-    /* Ensure central container stays transparent */
-    [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
-        background-color: transparent !important;
     }
     </style>
 """, unsafe_allow_html=True)
