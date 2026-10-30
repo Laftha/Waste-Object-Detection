@@ -165,46 +165,34 @@ with col1:
 
 with col2:
     st.subheader("2. AI Analysis & Insights")
+    
     if image_input is None:
         st.info("👈 Please upload an image or capture a photo on the left to start detection.")
-    elif image_input is not None and model_ready and 'detect_button' in locals() and detect_button:
-        with st.spinner("Analyzing image features..."):
-            results = model.predict(image_input, save=False, conf=0.40)
-            r = results[0]
-            
-            # Convert BGR detection output to RGB for Streamlit display
-            im_array = r.plot()
-            im_rgb = Image.fromarray(im_array[..., ::-1])
-            
-            st.image(im_rgb, caption="Object Detection Output", use_container_width=True)
-            
-            # Collect unique detected classes
-            detected_classes = set()
-            for box in r.boxes:
-                cls_id = int(box.cls[0])
-                detected_classes.add(model.names[cls_id])
-            
-            # Metrics
-            m_col1, m_col2 = st.columns(2)
-            m_col1.metric("Objects Identified", len(r.boxes))
-            m_col2.metric("Categories Found", len(detected_classes))
-            
-            st.markdown("---")
-            
-            if detected_classes:
-                st.markdown("### 💡 Environmental Insights & Guidelines")
-                for item in detected_classes:
-                    info = waste_info.get(item, None)
-                    if info:
-                        with st.expander(f"{info['icon']} **{item}** Details", expanded=True):
-                            st.write(f"⏱️ **Decomposition Time:** `{info['decomposition']}`")
-                            st.write(f"ℹ️ **Did You Know?** {info['info']}")
-                            st.write(f"♻️ **Actionable Tip:** {info['tip']}")
-                            st.success(f"🌱 **Eco Impact:** {info['impact']}")
-                    else:
-                        st.info(f"Detected Item: {item}")
-            else:
-                st.warning("No waste categories detected with high confidence. Try another angle or image.")
+    elif image_input is not None and model_ready:
+        # Check if your classify/detect button was clicked
+        if 'detect_button' in locals() and detect_button:
+            with st.spinner("Analyzing image features..."):
+                results = model.predict(image_input, save=False, conf=0.25)
+                r = results[0]
+                
+                # Convert BGR detection output to RGB for Streamlit display
+                im_array = r.plot()
+                im_rgb = Image.fromarray(im_array[..., ::-1])
+                
+                # Display the annotated image with bounding boxes
+                st.image(im_rgb, caption="Object Detection Output", use_container_width=True)
+                
+                # Extract detected classes and show details
+                detected_classes = set()
+                for box in r.boxes:
+                    cls_id = int(box.cls[0])
+                    class_name = model.names[cls_id]
+                    detected_classes.add(class_name)
+                
+                if detected_classes:
+                    st.success(f"Detected Items: {', '.join(detected_classes)}")
+                else:
+                    st.warning("No waste items detected clearly. Try a different angle or lighting.")
 
 # Footer Disclaimer
 st.markdown("---")
