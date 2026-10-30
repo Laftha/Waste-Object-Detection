@@ -1,4 +1,15 @@
 import streamlit as st
+import sys
+from unittest.mock import MagicMock
+
+# Trick Python into bypassing missing GUI system binaries for OpenCV
+class DummyCV2(MagicMock):
+    def __getattr__(self, name):
+        return MagicMock()
+
+sys.modules["cv2"] = DummyCV2()
+
+import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
 import numpy as np
