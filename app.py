@@ -157,58 +157,52 @@ with col1:
 with col2:
     st.subheader("2. AI Analysis & Insights")
     
-    # Check directly if a file has been uploaded or captured
-    if uploaded_file is not None:
-        image_input = Image.open(uploaded_file).convert("RGB")
-        st.image(image_input, caption="Selected Waste Image", use_container_width=True)
+    if image_input is not None:
+        st.image(image_input, caption="Uploaded Image", use_container_width=True)
         
         if st.button("🔍 Run AI Classification"):
-            with st.spinner("Analyzing image features..."):
-                results = model.predict(image_input, save=False, conf=0.40)
+            with st.spinner("Analyzing image..."):
+                # 1. Run inference
+                results = model.predict(image_input, conf=0.25)
                 r = results[0]
+                
+                # 2. Render bounding boxes image
                 im_array = r.plot()
                 im_rgb = Image.fromarray(im_array[..., ::-1])
                 st.image(im_rgb, caption="Detection Result", use_container_width=True)
                 
-                # Show detected classes
+                # 3. PASTE THE INSIGHTS CODE HERE:
                 classes = [model.names[int(box.cls[0])] for box in r.boxes]
+                
                 if classes:
-                    st.success(f"Detected: {', '.join(set(classes))}")
-                else:
-                    st.warning("No waste detected. Try another angle.")
+                    detected_item = classes[0].lower()
+                    st.success(f"**Detected Items:** {', '.join(set(classes))}")
                     
-    elif camera_file is not None:
-        image_input = Image.open(camera_file).convert("RGB")
-        st.image(image_input, caption="Captured Camera Image", use_container_width=True)
-        
-        if st.button("🔍 Run AI Classification"):
-            with st.spinner("Analyzing image features..."):
-                results = model.predict(image_input, save=False, conf=0.25)
-                r = results[0]
-                im_array = r.plot()
-                im_rgb = Image.fromarray(im_array[..., ::-1])
-                st.image(im_rgb, caption="Detection Result", use_container_width=True)
-                
-                classes = [model.names[int(box.cls[0])] for box in r.boxes]
-                if classes:
-                    st.success(f"Detected: {', '.join(set(classes))}")
+                    st.markdown("### 💡 Recycling & Disposal Insights")
+                    
+                    if "plastic" in detected_item or "bottle" in detected_item:
+                        st.info("**Category:** Plastic Waste\n\n**Action:** Rinse thoroughly and place in the **Recycling Bin**. Make sure caps are screwed back on.")
+                    elif "paper" in detected_item or "cardboard" in detected_item:
+                        st.info("**Category:** Paper / Cardboard\n\n**Action:** Flatten boxes and ensure paper is dry before placing in **Paper Recycling**.")
+                    elif "organic" in detected_item or "food" in detected_item or "fruit" in detected_item:
+                        st.info("**Category:** Organic Waste\n\n**Action:** Ideal for composting. Place in the **Organic / Compost Bin**.")
+                    elif "metal" in detected_item or "can" in detected_item:
+                        st.info("**Category:** Metal\n\n**Action:** Empty leftover liquid, rinse lightly, and drop into **Metal Recycling**.")
+                    else:
+                        st.info(f"**Category:** {detected_item.capitalize()}\n\n**Action:** Check local municipal guidelines for proper disposal.")
                 else:
-                    st.warning("No waste detected. Try another angle.")
+                    st.warning("No waste items detected clearly. Try taking a photo closer to the object.")
     else:
         st.info("👈 Upload an image or take a photo in Step 1 to unlock AI classification.")
         
-st.markdown("""
-    <style>
-    /* Transparent watermark at the bottom center */
-    .stApp {
-        background-image: url("https://raw.githubusercontent.com/Laftha/Waste-Object-Detection/main/logo.png");
-        background-size: 220px auto;
-        background-position: bottom 20px center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-    </style>
-""", unsafe_allow_html=True)
+st.markdown("---")
+col_left, col_center, col_right = st.columns([2, 1, 2])
 
+with col_center:
+    try:
+        st.image("Screenshot 2026-10-30 011304.jpg", width=160)
+    except Exception:
+        # Fallback if filename differs
+        pass
 # Footer Disclaimer
 st.caption("⚠️ **Disclaimer:** EcoSort AI provides automated waste classification for educational and demonstration purposes. Model predictions should be verified independently before making critical waste disposal decisions.")
