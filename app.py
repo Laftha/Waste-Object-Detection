@@ -94,8 +94,9 @@ with col2:
         
         if st.button("🔍 Run AI Classification"):
             with st.spinner("Analyzing image..."):
+                img_pil = Image.open(image_file)
                 # 1. Run inference using image_file
-                results = model.predict(image_file, conf=0.25)
+                results = model.predict(image_pil, conf=0.25)
                 r = results[0]
                 
                 # 2. Render bounding boxes
