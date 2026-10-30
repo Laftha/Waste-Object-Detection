@@ -8,7 +8,7 @@ Proper waste management and recycling rely heavily on efficient sorting. This pr
 
 ## Repository Contents
 
-- **`best (4).pt`**: The trained model weights file used for inference and object detection.
+- **`best.pt`**: The trained model weights file used for inference and object detection.
 
 ## Getting Started
 
