@@ -82,30 +82,35 @@ with col1:
             </style>
         """, unsafe_allow_html=True)
         camera_file = st.camera_input("Take a snapshot of the waste item")
-
 with col2:
     st.subheader("2. AI Analysis & Insights")
     
-    # Correctly select between file uploader and camera input using 'image_file'
+    # Select input source
     image_file = uploaded_file if input_type == "📁 Upload File" else camera_file
 
-    if st.button("🔍 Run AI Classification"):
+    # 1. First check if an image has been uploaded
+    if image_file is not None:
+        # Display the uploaded image preview immediately
+        st.image(image_file, caption="Uploaded Image", use_container_width=True)
+        
+        # 2. Show the classification button INSIDE the block
+        if st.button("🔍 Run AI Classification"):
             with st.spinner("Analyzing image..."):
                 # Save the uploaded file temporarily to disk
                 temp_path = "temp_image.jpg"
                 img_pil = Image.open(image_file).convert("RGB")
                 img_pil.save(temp_path)
                 
-                # 1. Run inference using the saved file path
+                # Run inference using the saved file path
                 results = model.predict(temp_path, conf=0.25)
                 r = results[0]
                 
-                # 2. Render bounding boxes
+                # Render bounding boxes
                 im_array = r.plot()
                 im_rgb = Image.fromarray(im_array[..., ::-1])
                 st.image(im_rgb, caption="Detection Result", use_container_width=True)
                 
-                # 3. Render Insights and Classes
+                # Render Insights and Classes
                 classes = [model.names[int(box.cls[0])] for box in r.boxes]
                 if classes:
                     detected_item = classes[0].lower()
@@ -123,9 +128,8 @@ with col2:
                 else:
                     st.warning("No waste items detected clearly. Try taking a photo closer to the object.")
     else:
+        # If no image uploaded yet, show this notice
         st.info("👈 Upload an image or take a photo in Step 1 to unlock AI classification.")
-
-st.markdown("---")
 
 # Footer Disclaimer
 st.caption("⚠️ **Disclaimer:** EcoSort AI provides automated waste classification for educational and demonstration purposes. Model predictions should be verified independently before making critical waste disposal decisions.")
