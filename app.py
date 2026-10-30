@@ -1,13 +1,5 @@
 import streamlit as st
 import torch
-
-# 1. Allow PyTorch to load custom YOLO weights safely
-try:
-    from ultralytics.nn.tasks import DetectionModel
-    torch.serialization.add_safe_globals([DetectionModel])
-except Exception:
-    pass
-
 from ultralytics import YOLO
 from PIL import Image
 import numpy as np
