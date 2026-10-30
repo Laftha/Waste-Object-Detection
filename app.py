@@ -216,5 +216,4 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Footer Disclaimer
-st.markdown(""")
 st.caption("⚠️ **Disclaimer:** EcoSort AI provides automated waste classification for educational and demonstration purposes. Model predictions should be verified independently before making critical waste disposal decisions.")
