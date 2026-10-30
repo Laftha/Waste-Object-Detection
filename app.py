@@ -164,7 +164,7 @@ with col2:
         
         if st.button("🔍 Run AI Classification"):
             with st.spinner("Analyzing image features..."):
-                results = model.predict(image_input, save=False, conf=0.25)
+                results = model.predict(image_input, save=False, conf=0.40)
                 r = results[0]
                 im_array = r.plot()
                 im_rgb = Image.fromarray(im_array[..., ::-1])
@@ -198,5 +198,17 @@ with col2:
         st.info("👈 Upload an image or take a photo in Step 1 to unlock AI classification.")
 
 # Footer Disclaimer
-st.markdown("---")
+st.markdown("""
+    <style>
+    /* Subtle centered watermark background */
+    .stApp {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), 
+                          url("YOUR_LOGO_URL_HERE");
+        background-size: 300px;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    </style>
+""", unsafe_allow_html=True)
 st.caption("⚠️ **Disclaimer:** EcoSort AI provides automated waste classification for educational and demonstration purposes. Model predictions should be verified independently before making critical waste disposal decisions.")
