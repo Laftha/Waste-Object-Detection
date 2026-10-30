@@ -11,7 +11,7 @@ st.set_page_config(
 )
 # Sidebar Information
 with st.sidebar:
-    st.image("logo.png", width=120)
+    st.image("Screenshot 2026-10-30 011304.jpg", width=120)
     st.title("♻️ About EcoSort")
     st.markdown("""
     **Group Name:** GROUP 4
