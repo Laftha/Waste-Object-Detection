@@ -70,7 +70,7 @@ with st.sidebar:
 # Header Section with Group Watermark
 st.markdown("<div style='text-align: center;'><span class='group-badge'>📌 Group 4 Project Presentation</span></div>", unsafe_allow_html=True)
 st.markdown("<h1 class='main-title'>♻️ EcoSort AI: Smart Waste Detector</h1>", unsafe_allow_html=True)
-st.markdown("<p class='sub-title'>Upload an image of waste to identify categories, view decomposition timelines, and get disposal tips.</p>", unsafe_allow_html=True)
+st.markdown("<p class='sub-title'>Upload an image or take a live picture of waste to identify categories and view recycling tips.</p>", unsafe_allow_html=True)
 
 # Load Model
 @st.cache_resource
@@ -134,22 +134,34 @@ waste_info = {
 # Main Layout: Two Columns
 col1, col2 = st.columns([1, 1], gap="large")
 
+image_input = None
+
 with col1:
-    st.subheader("1. Select & Preview Image")
-    uploaded_file = st.file_uploader("Upload a waste photo (JPG, PNG)", type=["jpg", "jpeg", "png"])
+    st.subheader("1. Provide Waste Image")
     
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file).convert("RGB")
-        st.image(image, caption="Uploaded Image", use_container_width=True)
+    # Selection tabs for upload or live camera photo
+    input_type = st.radio("Choose Input Method:", ["📁 Upload File", "📸 Use Camera"], horizontal=True)
+    
+    if input_type == "📁 Upload File":
+        uploaded_file = st.file_uploader("Upload a waste photo (JPG, PNG)", type=["jpg", "jpeg", "png"])
+        if uploaded_file is not None:
+            image_input = Image.open(uploaded_file).convert("RGB")
+    else:
+        camera_file = st.camera_input("Take a snapshot of the waste item")
+        if camera_file is not None:
+            image_input = Image.open(camera_file).convert("RGB")
+            
+    if image_input is not None:
+        st.image(image_input, caption="Selected Input Image", use_container_width=True)
         detect_button = st.button("🔍 Run Waste Detection")
 
 with col2:
     st.subheader("2. AI Analysis & Insights")
-    if uploaded_file is None:
-        st.info("👈 Please upload an image on the left to start detection.")
-    elif uploaded_file is not None and model_ready and 'detect_button' in locals() and detect_button:
+    if image_input is None:
+        st.info("👈 Please upload an image or capture a photo on the left to start detection.")
+    elif image_input is not None and model_ready and 'detect_button' in locals() and detect_button:
         with st.spinner("Analyzing image features..."):
-            results = model.predict(image, save=False, conf=0.25)
+            results = model.predict(image_input, save=False, conf=0.25)
             r = results[0]
             
             # Convert BGR detection output to RGB for Streamlit display
@@ -185,3 +197,7 @@ with col2:
                         st.info(f"Detected Item: {item}")
             else:
                 st.warning("No waste categories detected with high confidence. Try another angle or image.")
+
+# Footer Disclaimer
+st.markdown("---")
+st.caption("⚠️ **Disclaimer:** EcoSort AI provides automated waste classification for educational and demonstration purposes. Model predictions should be verified independently before making critical waste disposal decisions.")
