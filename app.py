@@ -1,5 +1,15 @@
+import os
 import streamlit as st
 import torch
+# 1. Disable PyTorch safe weights checking for Ultralytics models
+os.environ["TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD"] = "1"
+
+# 2. Register all internal YOLO modules into PyTorch safe globals
+try:
+    from ultralytics.nn import tasks
+    torch.serialization.add_safe_globals([tasks.DetectionModel])
+except Exception:
+    pass
 from ultralytics import YOLO
 from PIL import Image
 import numpy as np
