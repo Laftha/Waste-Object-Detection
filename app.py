@@ -1,13 +1,11 @@
-import os
-os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"
-os.environ["NO_AT_BRIDGE"] = "1"
-
-import cv2
-cv2.setNumThreads(0)
 import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
 import numpy as np
+
+# Prevent Ultralytics from executing cv2 GUI functions
+import os
+os.environ["YOLO_VERBOSE"] = "False"
 
 # Load your trained model
 model = YOLO('best.pt')
