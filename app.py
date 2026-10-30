@@ -9,7 +9,29 @@ st.set_page_config(
     page_icon="♻️",
     layout="wide"
 )
-
+# Sidebar Information
+with st.sidebar:
+    st.image("logo.png", width=120)
+    st.title("♻️ About EcoSort")
+    st.markdown("""
+    **Group Name:** GROUP 4
+    
+    **Project Description:**  
+    A smart waste classification capstone project designed to help identify recyclable materials and provide disposal insights.
+    """)
+    
+    st.markdown("---")
+    st.subheader("🎯 Covered Classes")
+    st.markdown("""
+    * 🧴 **Plastic Bottles**
+    * 🛍️ **Nylon / Soft Plastics**
+    * 🍾 **Glass Bottles**
+    * 👕 **Fabric / Textiles**
+    * 🥫 **Metal Waste**
+    """)
+    
+    st.markdown("---")
+    st.caption("Capstone Project Demo")
 # Load YOLO Model
 @st.cache_resource
 def load_model():
