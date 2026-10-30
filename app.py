@@ -196,19 +196,25 @@ with col2:
                     st.warning("No waste detected. Try another angle.")
     else:
         st.info("👈 Upload an image or take a photo in Step 1 to unlock AI classification.")
-
-# Footer Disclaimer
+        
 st.markdown("""
     <style>
-    /* Subtle landscape watermark at the bottom */
+    /* Clean transparent watermark at the bottom center */
     .stApp {
-        background-image: linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)), 
-                          url("https://github.com/Laftha/Waste-Object-Detection/blob/main/Screenshot%202026-10-30%20011304.jpg");
-        background-size: 260px auto;        /* Sets width to 260px and locks height to preserve landscape aspect ratio */
-        background-position: bottom 15px center; /* Pins it neatly to the bottom center */
+        background-image: url(""https://github.com/Laftha/Waste-Object-Detection/blob/main/Screenshot%202026-10-30%20011304.jpg"");
+        background-size: 200px auto;
+        background-position: bottom 20px center;
         background-repeat: no-repeat;
         background-attachment: fixed;
     }
+    
+    /* Ensure central container stays transparent */
+    [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+        background-color: transparent !important;
+    }
     </style>
 """, unsafe_allow_html=True)
+
+# Footer Disclaimer
+st.markdown(""")
 st.caption("⚠️ **Disclaimer:** EcoSort AI provides automated waste classification for educational and demonstration purposes. Model predictions should be verified independently before making critical waste disposal decisions.")
