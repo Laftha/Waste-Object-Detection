@@ -36,7 +36,7 @@ with st.sidebar:
 col_title, col_logo = st.columns([5, 1])
 
 with col_logo:
-    st.image("Screenshot 2026-10-30 011304.jpg", width=90)
+    st.image("Screenshot 2026-10-30 011304.jpg", width=150)
 # Load YOLO Model
 @st.cache_resource
 def load_model():
