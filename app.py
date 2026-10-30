@@ -1,3 +1,9 @@
+import os
+os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"
+os.environ["NO_AT_BRIDGE"] = "1"
+
+import cv2
+cv2.setNumThreads(0)
 import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
