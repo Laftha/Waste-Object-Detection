@@ -200,12 +200,12 @@ with col2:
 # Footer Disclaimer
 st.markdown("""
     <style>
-    /* Subtle centered watermark background */
+    /* Subtle landscape watermark at the bottom */
     .stApp {
-        background-image: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), 
-                          url("https://github.com/Laftha/Waste-Object-Detection/blob/main/Screenshot%202026-10-30%20011304.jpg");
-        background-size: 300px;
-        background-position: center center;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)), 
+                          url("");
+        background-size: 260px auto;        /* Sets width to 260px and locks height to preserve landscape aspect ratio */
+        background-position: bottom 15px center; /* Pins it neatly to the bottom center */
         background-repeat: no-repeat;
         background-attachment: fixed;
     }
