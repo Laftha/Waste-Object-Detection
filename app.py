@@ -9,17 +9,15 @@ st.set_page_config(
     page_icon="♻️",
     layout="wide"
 )
+
 # Sidebar Information
 with st.sidebar:
     st.image("Screenshot 2026-10-30 011304.jpg", width=120)
     st.title("♻️ About EcoSort")
     st.markdown("""
-    **Group Name:** GROUP 4
-    
-    **Project Description:**  
-    A smart waste classification capstone project designed to help identify recyclable materials and provide disposal insights.
+    **Group Name:** GROUP 4  
+    **Project Description:** A smart waste classification capstone project designed to help identify recyclable materials and provide disposal insights.
     """)
-    
     st.markdown("---")
     st.subheader("🎯 Covered Classes")
     st.markdown("""
@@ -29,12 +27,11 @@ with st.sidebar:
     * 👕 **Fabric / Textiles**
     * 🥫 **Metal Waste**
     """)
-    
     st.markdown("---")
     st.caption("Capstone Project Demo")
+    
     st.markdown("---")
     st.subheader("💬 Send Feedback")
-    
     with st.sidebar.form("feedback_form"):
         user_contact = st.text_input("Name or Email (Optional)", placeholder="e.g., John or john@email.com")
         user_feedback = st.text_area("Help us improve EcoSort:", placeholder="Type your feedback here...")
@@ -43,21 +40,21 @@ with st.sidebar:
         if submitted:
             if user_feedback.strip():
                 st.success("Thank you! Your feedback has been received.")
-                # Save response to a local log file
                 with open("feedback_log.txt", "a") as f:
                     f.write(f"Contact: {user_contact or 'Anonymous'}\nFeedback: {user_feedback}\n---\n")
             else:
                 st.warning("Please write some feedback before submitting.")
-# --- MAIN PAGE HEADER (Moved here so it's next to the title) ---
+
+# --- MAIN PAGE HEADER ---
 col_title, col_logo = st.columns([5, 1])
 
 with col_title:
     st.title("♻️ EcoSort AI: Smart Waste Detector")
     st.markdown("Upload an image or take a live picture of waste to identify categories and view recycling tips.")
-    
+
 with col_logo:
     st.image("Screenshot 2026-10-30 011304.jpg", width=140)
-    
+
 # Load YOLO Model
 @st.cache_resource
 def load_model():
@@ -65,7 +62,70 @@ def load_model():
 
 model = load_model()
 
-# Render Insights and Classes with Detailed Cards
+# Main Layout: Two Columns
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader("1. Provide Waste Image")
+    input_type = st.radio("Choose Input Method:", ["📁 Upload File", "📸 Use Camera"], horizontal=True)
+    
+    uploaded_file = None
+    camera_file = None
+    
+    if input_type == "📁 Upload File":
+        uploaded_file = st.file_uploader("Upload a waste photo", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
+    else:
+        st.markdown("""
+        <style>
+        div[data-testid="stCameraInput"] video {
+            transform: scaleX(1) !important;
+            object-fit: cover !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        camera_file = st.camera_input("Take a snapshot of the waste item")
+
+with col2:
+    st.subheader("2. AI Analysis & Insights")
+    
+    # Select input source
+    image_file = uploaded_file if input_type == "📁 Upload File" else camera_file
+    
+    if image_file is not None:
+        st.image(image_file, caption="Uploaded Image", use_container_width=True)
+        
+        # Custom styling for green button
+        st.markdown("""
+        <style>
+        div.stButton > button:first-child {
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        div.stButton > button:first-child:hover {
+            background-color: #218838;
+            color: white;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        if st.button("🔍 Run AI Classification"):
+            with st.spinner("Analyzing image..."):
+                temp_path = "temp_image.jpg"
+                img_pil = Image.open(image_file).convert("RGB")
+                img_pil.save(temp_path)
+                
+                # Run inference
+                results = model.predict(temp_path, conf=0.25)
+                r = results[0]
+                
+                # Render bounding boxes
+                im_array = r.plot()
+                im_rgb = Image.fromarray(im_array[..., ::-1])
+                st.image(im_rgb, caption="Detection Result", use_container_width=True)
+                
+                # Render Insights and Classes with Detailed Cards
                 classes = [model.names[int(box.cls[0])] for box in r.boxes]
                 if classes:
                     unique_classes = set(classes)
@@ -117,77 +177,9 @@ model = load_model()
                                 st.info("🌍 **Eco Impact:** Proper sorting reduces landfill overflow and promotes a circular economy.")
                 else:
                     st.warning("No waste items detected clearly. Try taking a photo closer to the object.")
-
-# Main Layout: Two Columns
-col1, col2 = st.columns(2)
-
-with col1:
-    st.subheader("1. Provide Waste Image")
-    input_type = st.radio("Choose Input Method:", ["📁 Upload File", "📸 Use Camera"], horizontal=True)
-    
-    uploaded_file = None
-    camera_file = None
-    
-    if input_type == "📁 Upload File":
-        uploaded_file = st.file_uploader("Upload a waste photo", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
     else:
-        st.markdown("""
-            <style>
-            div[data-testid="stCameraInput"] video {
-                transform: scaleX(1) !important;
-                object-fit: cover !important;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-        camera_file = st.camera_input("Take a snapshot of the waste item")
-with col2:
-    st.subheader("2. AI Analysis & Insights")
-    
-    # Select input source
-    image_file = uploaded_file if input_type == "📁 Upload File" else camera_file
-
-    # 1. First check if an image has been uploaded
-    if image_file is not None:
-        # Display the uploaded image preview immediately
-        st.image(image_file, caption="Uploaded Image", use_container_width=True)
-        
-        # 2. Show the classification button INSIDE the block
-        if st.button("🔍 Run AI Classification"):
-            with st.spinner("Analyzing image..."):
-                # Save the uploaded file temporarily to disk
-                temp_path = "temp_image.jpg"
-                img_pil = Image.open(image_file).convert("RGB")
-                img_pil.save(temp_path)
-                
-                # Run inference using the saved file path
-                results = model.predict(temp_path, conf=0.25)
-                r = results[0]
-                
-                # Render bounding boxes
-                im_array = r.plot()
-                im_rgb = Image.fromarray(im_array[..., ::-1])
-                st.image(im_rgb, caption="Detection Result", use_container_width=True)
-                
-                # Render Insights and Classes
-                classes = [model.names[int(box.cls[0])] for box in r.boxes]
-                if classes:
-                    detected_item = classes[0].lower()
-                    st.success(f"**Detected Items:** {', '.join(set(classes))}")
-                    st.markdown("### 💡 Recycling & Disposal Insights")
-                    
-                    if "plastic" in detected_item or "bottle" in detected_item:
-                        st.info("**Category:** Plastic Waste\n\n**Action:** Rinse thoroughly and place in the **Recycling Bin**. Make sure caps are screwed back on.")
-                    elif "nylon" in detected_item:
-                        st.info("**Category:** Nylon / Soft Plastic\n\n**Action:** Keep clean and dry. Check local store drop-off points for recycling.")
-                    elif "glass" in detected_item:
-                        st.info("**Category:** Glass Waste\n\n**Action:** Rinse and place in the **Glass Recycling Bin**.")
-                    else:
-                        st.info(f"**Category:** {detected_item.title()}\n\n**Action:** Follow local municipal recycling guidelines.")
-                else:
-                    st.warning("No waste items detected clearly. Try taking a photo closer to the object.")
-    else:
-        # If no image uploaded yet, show this notice
         st.info("👈 Upload an image or take a photo in Step 1 to unlock AI classification.")
 
 # Footer Disclaimer
+st.markdown("---")
 st.caption("⚠️ **Disclaimer:** EcoSort AI provides automated waste classification for educational and demonstration purposes. Model predictions should be verified independently before making critical waste disposal decisions.")
