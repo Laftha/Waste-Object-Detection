@@ -1,67 +1,187 @@
 import streamlit as st
 from PIL import Image
-from ultralytics import YOLO
 import numpy as np
 import os
 
-# Prevent Ultralytics from running GUI functions
+# Set page configuration for wide layout and custom styling
+st.set_page_config(
+    page_title="EcoSort - Smart Waste Detector",
+    page_icon="♻️",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# Custom CSS for enhanced UI styling
+st.markdown("""
+    <style>
+    .main-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #2E7D32;
+        text-align: center;
+        margin-bottom: 0px;
+    }
+    .sub-title {
+        font-size: 1.1rem;
+        color: #555555;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .group-badge {
+        background-color: #E8F5E9;
+        color: #2E7D32;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-bottom: 15px;
+        border: 1px solid #C8E6C9;
+    }
+    .stButton>button {
+        width: 100%;
+        background-color: #2E7D32;
+        color: white;
+        border-radius: 8px;
+        height: 3em;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+    .stButton>button:hover {
+        background-color: #1B5E20;
+        color: white;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 os.environ["YOLO_VERBOSE"] = "False"
 
-st.title("Smart Waste Detection App")
-st.write("Upload an image to classify waste items.")
+# Sidebar Watermark & Info
+with st.sidebar:
+    st.markdown("<div class='group-badge'>👥 Developed by Group 4</div>", unsafe_allow_html=True)
+    st.title("About EcoSort")
+    st.info("EcoSort leverages AI computer vision to instantly classify waste items and promote proper recycling habits.")
+    st.markdown("---")
+    st.markdown("### Supported Categories")
+    st.write("• Fabrics\n• Glass Bottles\n• Metals\n• Nylon\n• Organic Waste\n• Plastic Bottles")
+    st.markdown("---")
+    st.caption("🎓 Capstone / Group Project")
 
-# Load trained YOLO model
+# Header Section with Group Watermark
+st.markdown("<div style='text-align: center;'><span class='group-badge'>📌 Group 4 Project Presentation</span></div>", unsafe_allow_html=True)
+st.markdown("<h1 class='main-title'>♻️ EcoSort AI: Smart Waste Detector</h1>", unsafe_allow_html=True)
+st.markdown("<p class='sub-title'>Upload an image of waste to identify categories, view decomposition timelines, and get disposal tips.</p>", unsafe_allow_html=True)
+
+# Load Model
 @st.cache_resource
 def load_model():
+    from ultralytics import YOLO
     return YOLO("best.pt")
 
-model = load_model()
+try:
+    model = load_model()
+    model_ready = True
+except Exception as e:
+    model_ready = False
+    st.error(f"Error loading AI model weights: {e}")
 
-# Waste information dictionary
+# Knowledge Base with Detailed Eco-Metrics
 waste_info = {
-    'Fabric': {
-        'info': "Textiles and fabrics account for a significant portion of landfill waste.",
-        'tip': "Donate wearable clothes or drop them off at local textile recycling bins."
+    'Fabrics': {
+        'icon': '👕',
+        'decomposition': 'Up to 200 years (synthetic)',
+        'info': "Textiles account for over 92 million tons of global landfill waste annually.",
+        'tip': "Donate wearable clothes to local charities or take unwearable textiles to specialized fabric recycling bins.",
+        'impact': "Recycling 1kg of cotton saves up to 20,000 liters of water."
     },
     'Glass Bottle': {
-        'info': "Glass is 100% recyclable and can be recycled endlessly.",
-        'tip': "Rinse thoroughly and remove caps before recycling."
+        'icon': '🍾',
+        'decomposition': 'Over 1,000,000 years',
+        'info': "Glass is 100% endlessly recyclable without any loss in quality or purity.",
+        'tip': "Rinse out liquids thoroughly and remove lids/caps before placing in glass recycling bins.",
+        'impact': "Recycling one glass bottle saves enough energy to power a 100-watt bulb for 4 hours."
     },
     'Metal': {
-        'info': "Recycling metals saves up to 95% of the energy required to make them from raw materials.",
-        'tip': "Crush aluminum cans to save space in your recycling bin."
+        'icon': '🥫',
+        'decomposition': '50 - 500 years',
+        'info': "Aluminum cans are infinitely recyclable and can return to store shelves in just 60 days.",
+        'tip': "Rinse food residue out. Metal cans are fully accepted in standard recycling bins.",
+        'impact': "Recycling aluminum uses 95% less energy than producing new metal from raw bauxite."
     },
     'Nylon': {
-        'info': "Nylon takes hundreds of years to decompose in landfills.",
-        'tip': "Reuse bags whenever possible or take them to specific plastic film drop-offs."
+        'icon': '🛍️',
+        'decomposition': '30 - 40 years',
+        'info': "Nylon is a synthetic plastic derivative that breaks down into persistent microplastics.",
+        'tip': "Reuse bags as many times as possible or deposit them at retail plastic film drop-off points.",
+        'impact': "Reusing a bag just 4 times significantly offsets its carbon footprint."
     },
     'Organic Waste': {
-        'info': "Organic waste produces methane when decomposing in landfills.",
-        'tip': "Compost food scraps to enrich soil and reduce greenhouse gas emissions."
+        'icon': '🍎',
+        'decomposition': '2 - 6 weeks',
+        'info': "When organic waste decomposes without oxygen in landfills, it generates methane—a potent greenhouse gas.",
+        'tip': "Compost food scraps at home or place them in municipal green waste bins.",
+        'impact': "Composting enriches soil naturally and reduces greenhouse gas emissions."
     },
     'Plastic Bottles': {
-        'info': "Plastic bottles take up to 450 years to decompose.",
-        'tip': "Empty and flatten bottles before placing them in recycling bins."
+        'icon': '🧴',
+        'decomposition': '450 years',
+        'info': "Over 1 million plastic bottles are purchased every minute worldwide, with low recycling rates.",
+        'tip': "Empty, rinse, and flatten bottles to save bin space before recycling.",
+        'impact': "Recycling 1 ton of plastic saves 5,774 kWh of electricity and 16.3 barrels of oil."
     }
 }
 
-# Image File Uploader
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+# Main Layout: Two Columns
+col1, col2 = st.columns([1, 1], gap="large")
 
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Uploaded Image", use_container_width=True)
+with col1:
+    st.subheader("1. Select & Preview Image")
+    uploaded_file = st.file_uploader("Upload a waste photo (JPG, PNG)", type=["jpg", "jpeg", "png"])
     
-    if st.button("Detect Waste"):
-        results = model(image)
-        res_plotted = results[0].plot()
-        st.image(res_plotted, caption="Detected Waste", use_container_width=True)
-        
-        # Display waste tips for detected classes
-        for r in results:
-            for c in r.boxes.cls:
-                class_name = model.names[int(c)]
-                if class_name in waste_info:
-                    st.subheader(f"Information: {class_name}")
-                    st.write(f"**Fact:** {waste_info[class_name]['info']}")
-                    st.write(f"**Tip:** {waste_info[class_name]['tip']}")
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file).convert("RGB")
+        st.image(image, caption="Uploaded Image", use_container_width=True)
+        detect_button = st.button("🔍 Run Waste Detection")
+
+with col2:
+    st.subheader("2. AI Analysis & Insights")
+    if uploaded_file is None:
+        st.info("👈 Please upload an image on the left to start detection.")
+    elif uploaded_file is not None and model_ready and 'detect_button' in locals() and detect_button:
+        with st.spinner("Analyzing image features..."):
+            results = model.predict(image, save=False, conf=0.25)
+            r = results[0]
+            
+            # Convert BGR detection output to RGB for Streamlit display
+            im_array = r.plot()
+            im_rgb = Image.fromarray(im_array[..., ::-1])
+            
+            st.image(im_rgb, caption="Object Detection Output", use_container_width=True)
+            
+            # Collect unique detected classes
+            detected_classes = set()
+            for box in r.boxes:
+                cls_id = int(box.cls[0])
+                detected_classes.add(model.names[cls_id])
+            
+            # Metrics
+            m_col1, m_col2 = st.columns(2)
+            m_col1.metric("Objects Identified", len(r.boxes))
+            m_col2.metric("Categories Found", len(detected_classes))
+            
+            st.markdown("---")
+            
+            if detected_classes:
+                st.markdown("### 💡 Environmental Insights & Guidelines")
+                for item in detected_classes:
+                    info = waste_info.get(item, None)
+                    if info:
+                        with st.expander(f"{info['icon']} **{item}** Details", expanded=True):
+                            st.write(f"⏱️ **Decomposition Time:** `{info['decomposition']}`")
+                            st.write(f"ℹ️ **Did You Know?** {info['info']}")
+                            st.write(f"♻️ **Actionable Tip:** {info['tip']}")
+                            st.success(f"🌱 **Eco Impact:** {info['impact']}")
+                    else:
+                        st.info(f"Detected Item: {item}")
+            else:
+                st.warning("No waste categories detected with high confidence. Try another angle or image.")
