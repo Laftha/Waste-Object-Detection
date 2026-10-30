@@ -32,21 +32,22 @@ with st.sidebar:
     
     st.markdown("---")
     st.caption("Capstone Project Demo")
-# Header Layout with Title and Logo side-by-side
+# --- MAIN PAGE HEADER (Moved here so it's next to the title) ---
 col_title, col_logo = st.columns([5, 1])
 
+with col_title:
+    st.title("♻️ EcoSort AI: Smart Waste Detector")
+    st.markdown("Upload an image or take a live picture of waste to identify categories and view recycling tips.")
+    
 with col_logo:
-    st.image("Screenshot 2026-10-30 011304.jpg", width=150)
+    st.image("Screenshot 2026-10-30 011304.jpg", width=140)
+    
 # Load YOLO Model
 @st.cache_resource
 def load_model():
     return YOLO("best.pt")
 
 model = load_model()
-
-# Header Information
-st.title("♻️ EcoSort AI: Smart Waste Detector")
-st.markdown("Upload an image or take a live picture of waste to identify categories and view recycling tips.")
 
 # Recycling Knowledge Base
 RECYCLING_INFO = {
