@@ -143,7 +143,7 @@ with col1:
     input_type = st.radio("Choose Input Method:", ["📁 Upload File", "📸 Use Camera"], horizontal=True)
     
     if input_type == "📁 Upload File":
-        uploaded_file = st.file_uploader("Upload a waste photo (JPG, PNG)", type=["jpg", "jpeg", "png"])
+        uploaded_file = st.file_uploader("Upload a waste photo (JPG, PNG)", type=["jpg", "jpeg", "png", "JPG", "JPEG", "jfif"])
         if uploaded_file is not None:
             image_input = Image.open(uploaded_file).convert("RGB")
     else:
