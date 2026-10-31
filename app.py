@@ -76,10 +76,17 @@ with col1:
         uploaded_file = st.file_uploader("Upload a waste photo from folder", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
     else:
         st.subheader("📸 Camera Capture")
+        # Add a custom markdown style container to reduce mobile padding
+        st.markdown("""
+        <style>
+            [data-testid="stCameraInput"] {
+                padding: 0px !important;
+                margin-top: -10px !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+        
         camera_file = st.camera_input("Take a picture of the waste")
-
-    # Use whichever image the user provided
-    image_file = uploaded_file if input_type == "📁 Upload File" else camera_file
 with col2:
     st.subheader("2. AI Analysis & Insights")
     
