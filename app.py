@@ -72,7 +72,7 @@ with col1:
     uploaded_file = None
     camera_file = None
     
-    if input_type == "📁 Upload File":
+if input_type == "📁 Upload File":
     uploaded_file = st.file_uploader("Upload a waste photo", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
 else:
     st.subheader("📸 Camera Capture")
