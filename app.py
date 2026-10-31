@@ -68,19 +68,19 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("1. Provide Waste Image")
     input_type = st.radio("Choose Input Method:", ["📁 Upload File", "📸 Use Camera"], horizontal=True)
-    
+
     uploaded_file = None
     camera_file = None
-    
-if input_type == "📁 Upload File":
-    uploaded_file = st.file_uploader("Upload a waste photo from folder", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
-else:
-    st.subheader("📸 Back Camera Capture")
-    # Streamlit's native camera input handles the device camera cleanly
-    camera_file = st.camera_input("Take a picture of the waste")
-# Use whichever image the user provided
-image_file = uploaded_file if input_type == "📁 Upload File" else camera_file
 
+    if input_type == "📁 Upload File":
+        uploaded_file = st.file_uploader("Upload a waste photo from folder", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
+    else:
+        st.subheader("📸 Back Camera Capture")
+        # Streamlit's native camera input handles the device camera cleanly
+        camera_file = st.camera_input("Take a picture of the waste")
+
+    # Use whichever image the user provided
+    image_file = uploaded_file if input_type == "📁 Upload File" else camera_file
 with col2:
     st.subheader("2. AI Analysis & Insights")
     
