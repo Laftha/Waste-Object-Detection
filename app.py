@@ -73,17 +73,73 @@ with col1:
     camera_file = None
     
     if input_type == "📁 Upload File":
-        uploaded_file = st.file_uploader("Upload a waste photo", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
-    else:
-        st.markdown("""
-        <style>
-        div[data-testid="stCameraInput"] video {
-            transform: scaleX(1) !important;
-            object-fit: cover !important;
+    uploaded_file = st.file_uploader("Upload a waste photo", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
+else:
+    st.subheader("📸 Camera Capture")
+    
+    # Custom HTML/JS component with camera switching support
+    camera_html = """
+    <div style="text-align: center;">
+        <video id="video" autoplay playsinline style="width: 100%; max-width: 400px; border-radius: 8px; background: #000;"></video>
+        <div style="margin-top: 10px;">
+            <button id="switch" style="background-color: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-right: 5px;">🔄 Switch Camera</button>
+            <button id="snap" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; cursor: pointer;">📸 Capture</button>
+        </div>
+        <canvas id="canvas" style="display: none;"></canvas>
+    </div>
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const snap = document.getElementById('snap');
+        const switchBtn = document.getElementById('switch');
+        
+        let useFrontCamera = false;
+        let currentStream = null;
+
+        function startCamera() {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+            const constraints = {
+                video: { facingMode: useFrontCamera ? "user" : "environment" }
+            };
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(stream => {
+                    currentStream = stream;
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error("Error accessing camera:", err);
+                    // Fallback to any camera
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                        .then(stream => {
+                            currentStream = stream;
+                            video.srcObject = stream;
+                        });
+                });
         }
-        </style>
-        """, unsafe_allow_html=True)
-        camera_file = st.camera_input("Take a snapshot of the waste item")
+
+        switchBtn.addEventListener('click', () => {
+            useFrontCamera = !useFrontCamera;
+            startCamera();
+        });
+
+        snap.addEventListener('click', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            
+            // Pass the captured image back to Streamlit
+            window.parent.postMessage({ type: 'streamlit:setComponentValue', value: dataUrl }, '*');
+        });
+
+        // Initialize with back camera
+        startCamera();
+    </script>
+    """
+    
+    st.components.v1.html(camera_html, height=450)
 
 with col2:
     st.subheader("2. AI Analysis & Insights")
