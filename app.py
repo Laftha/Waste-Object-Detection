@@ -77,11 +77,19 @@ with col1:
     else:
         st.subheader("📸 Camera Capture")
         # Add a custom markdown style container to reduce mobile padding
+        # Add a custom markdown style container to reduce mobile padding and stretch the camera preview
         st.markdown("""
         <style>
             [data-testid="stCameraInput"] {
                 padding: 0px !important;
                 margin-top: -10px !important;
+                width: 100% !important;
+            }
+            [data-testid="stCameraInput"] video {
+                width: 100% !important;
+                height: auto !important;
+                object-fit: cover !important;
+                border-radius: 8px;
             }
         </style>
         """, unsafe_allow_html=True)
