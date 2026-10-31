@@ -75,8 +75,7 @@ with col1:
     if input_type == "📁 Upload File":
         uploaded_file = st.file_uploader("Upload a waste photo from folder", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
     else:
-        st.subheader("📸 Back Camera Capture")
-        # Streamlit's native camera input handles the device camera cleanly
+        st.subheader("📸 Camera Capture")
         camera_file = st.camera_input("Take a picture of the waste")
 
     # Use whichever image the user provided
