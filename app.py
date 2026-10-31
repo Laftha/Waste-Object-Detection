@@ -78,7 +78,6 @@ else:
     st.subheader("📸 Back Camera Capture")
     # Streamlit's native camera input handles the device camera cleanly
     camera_file = st.camera_input("Take a picture of the waste", facingMode="environment")
-
 # Use whichever image the user provided
 image_file = uploaded_file if input_type == "📁 Upload File" else camera_file
 
