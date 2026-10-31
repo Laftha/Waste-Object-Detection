@@ -79,14 +79,13 @@ else:
     
     # Custom HTML/JS component with camera switching support
     camera_html = """
-    <div style="text-align: center;">
-        <video id="video" autoplay playsinline style="width: 100%; max-width: 400px; border-radius: 8px; background: #000;"></video>
-        <div style="margin-top: 10px;">
-            <button id="switch" style="background-color: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-right: 5px;">🔄 Switch Camera</button>
-            <button id="snap" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; cursor: pointer;">📸 Capture</button>
-        </div>
-        <canvas id="canvas" style="display: none;"></canvas>
+    <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <video id="video" autoplay playsinline style="width: 100%; max-width: 100%; height: auto; border-radius: 8px; background: #000;"></video>
+    <div style="margin-top: 10px; margin-bottom: 10px;">
+        <button id="switch" style="...">🔄 Switch Camera</button>
+        <button id="snap" style="...">📸 Capture</button>
     </div>
+</div>
     <script>
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
