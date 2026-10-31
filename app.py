@@ -73,72 +73,14 @@ with col1:
     camera_file = None
     
 if input_type == "📁 Upload File":
-    uploaded_file = st.file_uploader("Upload a waste photo", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
+    uploaded_file = st.file_uploader("Upload a waste photo from folder", type=["jpg", "jpeg", "png", "JPG", "JPEG"])
 else:
-    st.subheader("📸 Camera Capture")
-    
-    # Custom HTML/JS component with camera switching support
-    camera_html = """
-    <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center;">
-    <video id="video" autoplay playsinline style="width: 100%; max-width: 100%; height: auto; border-radius: 8px; background: #000;"></video>
-    <div style="margin-top: 10px; margin-bottom: 10px;">
-        <button id="switch" style="...">🔄 Switch Camera</button>
-        <button id="snap" style="...">📸 Capture</button>
-    </div>
-</div>
-    <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const snap = document.getElementById('snap');
-        const switchBtn = document.getElementById('switch');
-        
-        let useFrontCamera = false;
-        let currentStream = null;
+    st.subheader("📸 Back Camera Capture")
+    # Streamlit's native camera input handles the device camera cleanly
+    camera_file = st.camera_input("Take a picture of the waste")
 
-        function startCamera() {
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-            }
-            const constraints = {
-                video: { facingMode: useFrontCamera ? "user" : "environment" }
-            };
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(stream => {
-                    currentStream = stream;
-                    video.srcObject = stream;
-                })
-                .catch(err => {
-                    console.error("Error accessing camera:", err);
-                    // Fallback to any camera
-                    navigator.mediaDevices.getUserMedia({ video: true })
-                        .then(stream => {
-                            currentStream = stream;
-                            video.srcObject = stream;
-                        });
-                });
-        }
-
-        switchBtn.addEventListener('click', () => {
-            useFrontCamera = !useFrontCamera;
-            startCamera();
-        });
-
-        snap.addEventListener('click', () => {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            const dataUrl = canvas.toDataURL('image/jpeg');
-            
-            // Pass the captured image back to Streamlit
-            window.parent.postMessage({ type: 'streamlit:setComponentValue', value: dataUrl }, '*');
-        });
-
-        // Initialize with back camera
-        startCamera();
-    </script>
-    """
-    
-    st.components.v1.html(camera_html, height=450)
+# Use whichever image the user provided
+image_file = uploaded_file if input_type == "📁 Upload File" else camera_file
 
 with col2:
     st.subheader("2. AI Analysis & Insights")
