@@ -85,9 +85,10 @@ with col1:
                 margin-top: -10px !important;
                 width: 100% !important;
             }
-            [data-testid="stCameraInput"] video {
+            [data-testid="stCameraInput"] video, 
+            [data-testid="stCameraInput"] > div {
                 width: 100% !important;
-                height: auto !important;
+                aspect-ratio: 1 / 1 !important;
                 object-fit: cover !important;
                 border-radius: 8px;
             }
