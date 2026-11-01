@@ -21,11 +21,11 @@ with st.sidebar:
     st.markdown("---")
     st.subheader("🎯 Covered Classes")
     st.markdown("""
-    * 🧴 **Plastic Bottles**
-    * 🛍️ **Nylon / Soft Plastics**
-    * 🍾 **Glass Bottles**
-    * 👕 **Fabric / Textiles**
-    * 🥫 **Metal Waste**
+    * 🧴 **Plastic**
+    * 🛍️ **Nylon**
+    * 🍾 **Glass**
+    * 👕 **Fabric**
+    * 🥫 **Metal**
     """)
     st.markdown("---")
     st.caption("Capstone Project Demo")
@@ -146,36 +146,36 @@ with col2:
                     for cls_name in unique_classes:
                         item_lower = cls_name.lower()
                         
-                        if "plastic" in item_lower or "bottle" in item_lower:
-                            with st.expander("♻️ Plastic Bottles Details", expanded=True):
+                        if "plastic" in item_lower:
+                            with st.expander("♻️ Plastic Details", expanded=True):
                                 st.markdown("⏱️ **Decomposition Time:** 450 years")
                                 st.markdown("ℹ️ **Did You Know?** Over 1 million plastic bottles are purchased every minute worldwide, with low recycling rates.")
                                 st.markdown("🌱 **Actionable Tip:** Empty, rinse, and flatten bottles to save bin space before recycling.")
                                 st.info("🌍 **Eco Impact:** Recycling 1 ton of plastic saves 5,774 kWh of electricity and 16.3 barrels of oil.")
                                 
-                        elif "nylon" in item_lower or "soft" in item_lower:
-                            with st.expander("🛍️ Nylon / Soft Plastics Details", expanded=True):
+                        elif "nylon" in item_lower:
+                            with st.expander("🛍️ Nylon Details", expanded=True):
                                 st.markdown("⏱️ **Decomposition Time:** 20 - 500 years")
                                 st.markdown("ℹ️ **Did You Know?** Soft plastics and plastic bags often clog municipal recycling machinery if mixed with rigid plastics.")
                                 st.markdown("🌱 **Actionable Tip:** Keep clean and dry. Return them to local grocery store collection bins.")
                                 st.info("🌍 **Eco Impact:** Diverting soft plastics from landfills reduces litter and prevents wildlife entanglement.")
                                 
                         elif "glass" in item_lower:
-                            with st.expander("🍾 Glass Bottles Details", expanded=True):
+                            with st.expander("🍾 Glass Details", expanded=True):
                                 st.markdown("⏱️ **Decomposition Time:** 1+ million years (virtually infinite)")
                                 st.markdown("ℹ️ **Did You Know?** Glass can be recycled infinitely without loss in quality or purity.")
                                 st.markdown("🌱 **Actionable Tip:** Rinse thoroughly and separate by color if required by your local facility.")
                                 st.info("🌍 **Eco Impact:** Recycling glass significantly reduces greenhouse gas emissions from melting raw materials.")
                                 
-                        elif "fabric" in item_lower or "textile" in item_lower:
-                            with st.expander("👕 Fabric / Textiles Details", expanded=True):
+                        elif "fabric" in item_lower:
+                            with st.expander("👕 Fabric Details", expanded=True):
                                 st.markdown("⏱️ **Decomposition Time:** 20 - 200+ years (depending on synthetic content)")
                                 st.markdown("ℹ️ **Did You Know?** Millions of tons of textiles end up in landfills annually, though a vast majority are reusable or recyclable.")
                                 st.markdown("🌱 **Actionable Tip:** Donate wearable clothes and drop off unwearable textiles at community textile recycling bins.")
                                 st.info("🌍 **Eco Impact:** Textile recycling saves water, reduces pesticide use, and curtails carbon footprints.")
                                 
                         elif "metal" in item_lower:
-                            with st.expander("🥫 Metal Waste Details", expanded=True):
+                            with st.expander("🥫 Metal Details", expanded=True):
                                 st.markdown("⏱️ **Decomposition Time:** 50 - 500 years")
                                 st.markdown("ℹ️ **Did You Know?** Aluminum can be recycled and back on store shelves in as little as 60 days.")
                                 st.markdown("🌱 **Actionable Tip:** Rinse cans and crush them to maximize recycling bin capacity.")
