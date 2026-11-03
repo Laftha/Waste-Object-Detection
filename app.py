@@ -5,7 +5,7 @@ import os
 
 # Page Configuration
 st.set_page_config(
-    page_title="EcoSort - Smart Waste Detector",
+    page_title="group 4",
     page_icon="♻️",
     layout="wide"
 )
